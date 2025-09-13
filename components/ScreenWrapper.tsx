@@ -1,0 +1,30 @@
+import { colors } from "@/constants/colors";
+import { ScreenWrapperProps } from "@/types";
+import React from "react";
+import { StatusBar, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const ScreenWrapper = ({
+  children,
+  style,
+  barStyle = "dark-content",
+  backgroundColor = colors.neutral900, // ✅ default background
+}: ScreenWrapperProps) => {
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor }, style]}
+      edges={["top", "left", "right", "bottom"]} // ✅ respects all safe areas
+    >
+      <StatusBar barStyle={barStyle} backgroundColor={backgroundColor} />
+      {children}
+    </SafeAreaView>
+  );
+};
+
+export default ScreenWrapper;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
