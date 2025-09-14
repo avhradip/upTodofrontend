@@ -18,7 +18,7 @@ const onboarding3 = () => {
         <View style={styles.skipButtonContainer}>
           <TouchableOpacity
             style={styles.skipButton}
-            onPress={() => router.push("/(onboarding)/Welcome")}
+            onPress={() => router.push("/(onboarding)/welcome")}
           >
             <Typo style={styles.skipText}>SKIP</Typo>
           </TouchableOpacity>

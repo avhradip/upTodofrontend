@@ -4,19 +4,51 @@ import NavigatingButton from "@/components/NavigatingButton";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Typo from "@/components/Typo";
 import { colors } from "@/constants/colors";
+import { login } from "@/Redux/authSlice";
 import { verticalScale } from "@/utility/styling";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
+  const dispatch = useDispatch<any>(); // ✅ allow thunk dispatch
+  const { isAuthenticated, loading, error } = useSelector(
+    (state: any) => state?.auth
+  );
   const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // const handleClickLogin = () => {
-  //   router.push("/(tabs)/home");
-  // };
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(taps)/home"); // ✅ redirect to index
+    }
+  }, [isAuthenticated]);
+
+  const handleClickLogin = () => {
+    if (!email || !password) {
+      Alert.alert("Missing Fields", "Please enter both email and password.");
+      return;
+    }
+
+    dispatch(login({ email, password }))
+      .unwrap()
+      .then(() => {
+        Alert.alert("Success", "Login successful!");
+      })
+      .catch((err: any) => {
+        Alert.alert("Login Failed", err || "Something went wrong.");
+      });
+  };
 
   const handleClickRegister = () => {
     router.push("/(auth)/register");
@@ -58,14 +90,26 @@ const Login = () => {
           />
         </View>
 
+        {/* Error message */}
+        {/* {error ? (
+          <Typo
+            color="red"
+            size={14}
+            style={{ marginBottom: 10, textAlign: "center" }}
+          >
+            {error}
+          </Typo>
+        ) : null} */}
+
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <NavigatingButton
             variant="primary"
             style={{ width: "100%" }}
-            // onPress={handleClickLogin}
+            onPress={handleClickLogin}
+            disabled={loading}
           >
-            LOGIN
+            {loading ? <ActivityIndicator color="#fff" /> : "LOGIN"}
           </NavigatingButton>
         </View>
 
@@ -76,30 +120,30 @@ const Login = () => {
           <View style={styles.divider} />
         </View>
 
+        {/* Social Buttons */}
         <View style={styles.buttonContainer}>
-          {/* Google Button */}
           <NavigatingButton
             border
             variant="secondary"
             style={{ width: "100%" }}
-            icon="GoogleLogo" // 👈 phosphor-react-native Google icon
+            icon="GoogleLogo"
             iconPosition="left"
           >
             Register With Google
           </NavigatingButton>
 
-          {/* Apple Button */}
           <NavigatingButton
             border
             variant="secondary"
             style={{ width: "100%" }}
-            icon="AppleLogo" // 👈 phosphor-react-native Apple icon
+            icon="AppleLogo"
             iconPosition="left"
           >
             Register With Apple
           </NavigatingButton>
         </View>
 
+        {/* Footer */}
         <View style={styles.footer}>
           <Typo size={15} color={colors.neutral500}>
             Already have an account?
@@ -132,9 +176,10 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 20,
-    marginBottom: 30,
+    marginBottom: 10,
   },
   buttonContainer: {
+    gap: 20,
     marginBottom: 20,
   },
   dividerContainer: {
@@ -152,8 +197,8 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     alignItems: "center",
-      justifyContent: "center",
-    gap:5,
+    justifyContent: "center",
+    gap: 5,
     paddingBottom: 20,
   },
 });

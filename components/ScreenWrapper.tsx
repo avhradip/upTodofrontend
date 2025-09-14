@@ -7,13 +7,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const ScreenWrapper = ({
   children,
   style,
-  barStyle = "dark-content",
-  backgroundColor = colors.neutral900, // ✅ default background
+  barStyle = "light-content",
+  backgroundColor = colors.neutral900,
 }: ScreenWrapperProps) => {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor }, style]}
-      edges={["top", "left", "right", "bottom"]} // ✅ respects all safe areas
+      edges={["top", "left", "right"]} // 👈 exclude bottom
     >
       <StatusBar barStyle={barStyle} backgroundColor={backgroundColor} />
       {children}
@@ -24,7 +24,5 @@ const ScreenWrapper = ({
 export default ScreenWrapper;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
 });

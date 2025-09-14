@@ -1,5 +1,8 @@
+import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { Descriptor, NavigationHelpers, ParamListBase, RouteProp, TabNavigationState } from "@react-navigation/native";
 import * as Icons from "phosphor-react-native";
 import { TextStyle, ViewStyle } from "react-native";
+import { EdgeInsets } from "react-native-safe-area-context";
 
 export type TypoProps = {
   children: React.ReactNode;
@@ -37,4 +40,19 @@ export type NavigatingButtonProps = {
   border?: boolean;
   disabled?: boolean;
 }
+
+export type BottomTabDescriptor = Descriptor<
+  BottomTabNavigationOptions,
+  BottomTabNavigationProp<ParamListBase>,
+  RouteProp<ParamListBase>
+>;
+
+export type BottomTabDescriptorMap = Record<string, BottomTabDescriptor>;
+
+export type BottomTabBarProps = {
+  state: TabNavigationState<ParamListBase>;
+  descriptors: BottomTabDescriptorMap;
+  navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>;
+  insets: EdgeInsets;
+};
 

@@ -2,17 +2,24 @@ import { colors } from "@/constants/colors";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function Index() {
 
   const router = useRouter()
+  const {isAuthenticated}=useSelector((state:any)=>state.auth)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace("/(onboarding)/onboarding1");
-    }, 1000)
-    return ()=>clearTimeout(timer)
-  },[])
+      if (!isAuthenticated) {
+        router.replace("/(onboarding)/onboarding1");
+      } else {
+        router.replace("/(taps)/home");
+      }
+      
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [isAuthenticated]);
 
   return (
     <View style={styles.container}>
