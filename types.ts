@@ -1,7 +1,8 @@
 import { BottomTabNavigationEventMap, BottomTabNavigationOptions, BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { Descriptor, NavigationHelpers, ParamListBase, RouteProp, TabNavigationState } from "@react-navigation/native";
 import * as Icons from "phosphor-react-native";
-import { TextStyle, ViewStyle } from "react-native";
+import { ReactNode } from "react";
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { EdgeInsets } from "react-native-safe-area-context";
 
 export type TypoProps = {
@@ -20,16 +21,16 @@ export type ScreenWrapperProps = {
     backgroundColor?: string;
 }
 
-export type InputProps = {
-    label?: string;
-    value: string;
-    onChange: (text: string) => void;
-    type?: "default" | "email-address" | "password" | "numeric" | "phone-pad";
-    placeholder?: string;
-    placeholderTextColor?: string;
-    backgroundColor?: string;
+export type  TextInputProps ={
+  label?: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  type?: "default" | "email-address" | "numeric" | "password";
+  backgroundColor?: string;
+  style?: StyleProp<TextStyle>;
+  icon?: ReactNode; // ✅ icon prop
+  iconPosition?: "left" | "right"; // ✅ position option
 }
-
 export type NavigatingButtonProps = {
   children: React.ReactNode;
   onPress?: () => void;
@@ -54,5 +55,16 @@ export type BottomTabBarProps = {
   descriptors: BottomTabDescriptorMap;
   navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>;
   insets: EdgeInsets;
+};
+
+export type AvatarProps = {
+  uri?: string; // profile image url
+  size?: number; // avatar size
+  name?: string; // fallback initials
+};
+
+export type Priority = {
+  name: string;
+  number: number;
 };
 

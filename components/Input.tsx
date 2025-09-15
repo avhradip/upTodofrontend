@@ -1,5 +1,5 @@
 import { colors, radius } from "@/constants/colors";
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   StyleProp,
   StyleSheet,
@@ -17,6 +17,8 @@ interface Props extends TextInputProps {
   type?: "default" | "email-address" | "numeric" | "password";
   backgroundColor?: string;
   style?: StyleProp<TextStyle>;
+  icon?: ReactNode; // ✅ icon prop
+  iconPosition?: "left" | "right"; // ✅ position option
 }
 
 const Input = ({
@@ -26,9 +28,11 @@ const Input = ({
   type = "default",
   placeholder,
   placeholderTextColor,
-  backgroundColor = colors.neutral800, // ✅ default bg
+  backgroundColor = colors.neutral800,
   style,
   multiline = false,
+  icon,
+  iconPosition = "left",
   ...rest
 }: Props) => {
   const isPassword = type === "password";
@@ -40,17 +44,25 @@ const Input = ({
           {label}
         </Typo>
       )}
-      <TextInput
-        placeholder={isPassword ? "••••••" : placeholder}
-        placeholderTextColor={placeholderTextColor || colors.neutral400}
-        style={[styles.input, { backgroundColor }, style]}
-        value={value}
-        onChangeText={onChangeText}
-        keyboardType={isPassword ? "default" : type}
-        secureTextEntry={isPassword}
-        multiline={multiline}
-        {...rest}
-      />
+      <View style={[styles.inputWrapper, { backgroundColor }]}>
+        {icon && iconPosition === "left" && (
+          <View style={styles.icon}>{icon}</View>
+        )}
+        <TextInput
+          placeholder={isPassword ? "••••••" : placeholder}
+          placeholderTextColor={placeholderTextColor || colors.neutral400}
+          style={[styles.input, style]}
+          value={value}
+          onChangeText={onChangeText}
+          keyboardType={isPassword ? "default" : type}
+          secureTextEntry={isPassword}
+          multiline={multiline}
+          {...rest}
+        />
+        {icon && iconPosition === "right" && (
+          <View style={styles.icon}>{icon}</View>
+        )}
+      </View>
     </View>
   );
 };
@@ -62,14 +74,22 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     gap: 4,
   },
-  input: {
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.neutral400,
     borderRadius: radius._6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
+    width: "100%",
+  },
+  input: {
+    flex: 1,
     paddingVertical: 10,
     fontSize: 16,
-    color: colors.neutral50, // ✅ brighter text for dark bg
-    width: "100%",
+    color: colors.neutral50,
+  },
+  icon: {
+    marginHorizontal: 6,
   },
 });

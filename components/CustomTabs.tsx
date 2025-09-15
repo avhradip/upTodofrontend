@@ -1,7 +1,8 @@
 import { verticalScale } from "@/utility/styling";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useRouter } from "expo-router";
 import * as Icon from "phosphor-react-native";
-import React, { useState } from "react";
+import React from "react";
 import {
   ColorSchemeName,
   Platform,
@@ -11,7 +12,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import TaskModal from "../components/TaskModal"; // ✅ import TaskModal
 import FloatingButton from "./FloatingButton";
 
 type CustomTabsProps = BottomTabBarProps & {
@@ -33,7 +33,7 @@ export default function CustomTabs({
   const insets = useSafeAreaInsets();
   const bottomOffset = (insets.bottom || 0) + verticalScale(12);
 
-  const [taskModalVisible, setTaskModalVisible] = useState(false);
+  const router= useRouter();
 
   // Only home + profile
   const routes = state.routes.filter(
@@ -91,21 +91,12 @@ export default function CustomTabs({
           {renderTab(routes[0], 0)}
 
           {/* Floating Button in center */}
-          <FloatingButton onPress={() => setTaskModalVisible(true)} />
+          <FloatingButton onPress={()=>router.push("/tasksModal")} />
 
           {/* Right (Profile) */}
           {renderTab(routes[1], 1)}
         </View>
       </View>
-
-      {/* ✅ Task Modal */}
-      <TaskModal
-        visible={taskModalVisible}
-        onClose={() => setTaskModalVisible(false)}
-        onAdd={(task:any) => {
-          console.log("Task Added:", task);
-        }}
-      />
     </>
   );
 }
