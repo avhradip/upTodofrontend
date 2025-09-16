@@ -1,16 +1,18 @@
 import BackButton from "@/components/BackButton";
 import Input from "@/components/Input";
-import PriorityDialog from "@/components/PriorityDialog";
+import PriorityDialog from "@/components/PriorityDialog"; // ✅ import dialog
 import ScreenWrapper from "@/components/ScreenWrapper";
-import Typo from "@/components/Typo";
 import { colors, radius } from "@/constants/colors";
+import { Priority } from "@/types";
 import { verticalScale } from "@/utility/styling";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { useRouter } from "expo-router";
 import * as Icons from "phosphor-react-native";
 import React, { useState } from "react";
 import {
+  Alert,
   Platform,
   ScrollView,
   StyleSheet,
@@ -20,19 +22,36 @@ import {
 } from "react-native";
 
 export default function TasksModal() {
-  const [priority, setPriority] = useState(null);
+  const routre=useRouter()
+  const [priority, setPriority] = useState<Priority | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<Date | null>(null);
+  const [data, setData] = useState({
+    title: "",
+    description: "",
+    priority: "",
+    category: "",
+    date: "",
+  });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const handleAddTodo = (data:any) => {
+    if ( !data.title || !data.date || !data.description || !data.priority) {
+      Alert.alert(`Plese enter all fields`)
+    } else {
+      routre.back()
+      console.log(data);
+    }
+  }
 
   const handleDateChange = (
     event: DateTimePickerEvent,
     selectedDate?: Date
   ) => {
-    setShowDatePicker(Platform.OS === "ios"); // keep open for iOS
+    setShowDatePicker(Platform.OS === "ios");
     if (selectedDate) setDate(selectedDate);
   };
 
@@ -49,104 +68,137 @@ export default function TasksModal() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <View>
-            <BackButton />
-          </View>
+          <BackButton />
           <View style={{ flex: 1, alignItems: "center" }}>
             <View style={styles.dragHandle} />
             <Text style={styles.title}>Add New Task</Text>
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Content */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: verticalScale(100) }}
+        >
           {/* Task Name */}
           <Input
             label="Task Name"
             placeholder="Enter task title"
-            value=""
-            onChangeText={() => {}}
+            value={data.title}
+            onChangeText={(value) => setData({ ...data, title: value })}
           />
 
           {/* Description */}
           <Input
             label="Description"
             placeholder="Enter task details"
-            value=""
-            onChangeText={() => {}}
+            value={data.description}
+            onChangeText={(value) => setData({ ...data, description: value })}
             multiline
             style={{ height: 100, textAlignVertical: "top" }}
           />
 
           {/* Date Picker */}
-          <TouchableOpacity
-            style={styles.datePickerButton}
-            onPress={() => setShowDatePicker(true)}
-          >
-            {date ? (
-              <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
-            ) : (
-              <Icons.Calendar color={colors.white} size={25} weight="light" />
-            )}
-          </TouchableOpacity>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={date || new Date()}
-              mode="date"
-              display={Platform.OS === "ios" ? "inline" : "default"}
-              onChange={handleDateChange}
-            />
-          )}
-
-          <TouchableOpacity
-            style={styles.timePickerButton}
-            onPress={() => setShowTimePicker(true)}
-          >
-            {time ? (
-              <Text style={styles.timeText}>
-                {time.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-            ) : (
-              <Icons.Timer size={25} color={colors.neutral200} weight="light" />
-            )}
-          </TouchableOpacity>
-
-          {showTimePicker && (
-            <DateTimePicker
-              value={time || new Date()}
-              mode="time"
-              is24Hour={true}
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={handleTimeChange}
-            />
-          )}
-
-          {/* Priority Selector */}
           <View style={styles.section}>
-            <Typo size={15} fontWeight="300" color={colors.neutral200}>
-              Priority
-            </Typo>
-            <TouchableOpacity onPress={() => setShowDialog(true)}>
-              <Text style={styles.priorityText}>
-                {priority ? priority : "Choose Priority"}
-              </Text>
+            <Text style={styles.label}>Due Date</Text>
+            <TouchableOpacity
+              style={styles.selectorButton}
+              onPress={() => setShowDatePicker(true)}
+            >
+              {date ? (
+                <Text style={styles.selectorText}>
+                  {date.toLocaleDateString()}
+                </Text>
+              ) : (
+                <Icons.Calendar
+                  size={22}
+                  color={colors.neutral300}
+                  weight="light"
+                />
+              )}
             </TouchableOpacity>
 
-            <PriorityDialog
-              visible={showDialog}
-              onClose={() => setShowDialog(false)}
-              onSelect={(p: any) => setPriority(p)}
-            />
+            {showDatePicker && (
+              <DateTimePicker
+                value={date || new Date()}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={handleDateChange}
+              />
+            )}
+          </View>
+
+          {/* Time Picker */}
+          <View style={styles.section}>
+            <Text style={styles.label}>Due Time</Text>
+            <TouchableOpacity
+              style={styles.selectorButton}
+              onPress={() => setShowTimePicker(true)}
+            >
+              {time ? (
+                <Text style={styles.selectorText}>
+                  {time.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Text>
+              ) : (
+                <Icons.Timer
+                  size={22}
+                  color={colors.neutral300}
+                  weight="light"
+                />
+              )}
+            </TouchableOpacity>
+
+            {showTimePicker && (
+              <DateTimePicker
+                value={time || new Date()}
+                mode="time"
+                is24Hour={true}
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={handleTimeChange}
+              />
+            )}
+          </View>
+
+          {/* Priority */}
+          <View style={styles.section}>
+            <Text style={styles.label}>Priority</Text>
+            <TouchableOpacity
+              style={[
+                styles.selectorButton,
+                priority ? { backgroundColor: colors.primaryDark } : {},
+              ]}
+              onPress={() => setShowDialog(true)}
+            >
+              <Icons.Flag size={22} color={colors.neutral200} weight="light" />
+              <Text style={[styles.selectorText, { marginLeft: 8 }]}>
+                {priority?.number
+                  ? `Priority ${priority.number}`
+                  : "Select Priority"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
 
-        {/* Save Button */}
-        <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.addButtonText}>Add Task</Text>
-        </TouchableOpacity>
+        {/* Sticky Save Button */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddTodo}>
+            <Text style={styles.addButtonText}>Add Task</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ✅ Priority Dialog */}
+        <PriorityDialog
+          visible={showDialog}
+          onClose={() => setShowDialog(false)}
+          onSelect={(p: Priority) => {
+            setPriority(p);
+            setData({ ...data, priority: p.number.toString() });
+          }}
+          selectedPriority={priority}
+        />
       </View>
     </ScreenWrapper>
   );
@@ -159,7 +211,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    paddingBottom: verticalScale(40),
+    paddingBottom: 0,
   },
   header: {
     flexDirection: "row",
@@ -182,26 +234,36 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 20,
   },
-  priorityRow: {
-    flexDirection: "row",
-    marginTop: 10,
-    gap: 10,
+  label: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: colors.neutral200,
+    marginBottom: 6,
   },
-  priorityButton: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: radius._6,
-    backgroundColor: colors.neutral800,
+  selectorButton: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: radius._10,
+    backgroundColor: colors.neutral800,
     borderWidth: 1,
     borderColor: colors.neutral600,
   },
-  priorityText: {
-    color: colors.neutral200,
-    fontSize: 14,
+  selectorText: {
+    color: colors.neutral100,
+    fontSize: 15,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 22,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: colors.neutral900,
   },
   addButton: {
-    marginTop: 20,
     paddingVertical: 14,
     borderRadius: radius._10,
     backgroundColor: colors.primary,
@@ -211,34 +273,5 @@ const styles = StyleSheet.create({
     color: colors.neutral50,
     fontSize: 16,
     fontWeight: "600",
-  },
-  datePickerButton: {
-    width: 110,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    backgroundColor: colors.neutral800,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-  dateText: {
-    color: colors.white,
-    fontSize: 16,
-  },
-  timePickerButton: {
-    width: 110,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    backgroundColor: colors.neutral800,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-
-  timeText: {
-    color: colors.white,
-    fontSize: 16,
   },
 });

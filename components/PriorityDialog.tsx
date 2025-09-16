@@ -1,5 +1,6 @@
 import { colors } from "@/constants/colors";
 import { priorities } from "@/constants/data";
+import { Priority } from "@/types";
 import * as Icons from "phosphor-react-native";
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -7,10 +8,16 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onSelect: any;
+  onSelect: (p: Priority) => void;
+  selectedPriority: Priority | null;
 }
 
-const PriorityDialog = ({ visible, onClose, onSelect }: Props) => {
+const PriorityDialog = ({
+  visible,
+  onClose,
+  onSelect,
+  selectedPriority,
+}: Props) => {
   return (
     <Modal
       transparent
@@ -23,51 +30,31 @@ const PriorityDialog = ({ visible, onClose, onSelect }: Props) => {
           <Text style={styles.title}>Task Priority</Text>
 
           <View style={styles.grid}>
-            {priorities.map((p) => {
-              // Get the icon component dynamically
-              const IconComponent = Icons[
-                p.name as keyof typeof Icons
-              ] as React.FC<Icons.IconProps>;
-
-              return (
-                <TouchableOpacity
-                  key={p.number}
-                  style={[
-                    styles.option,
-                    {
-                      borderColor: colors.neutral600,
-                    },
-                  ]}
-                  onPress={() => {
-                    console.log(p);
-                    onSelect(p);
-                    // onClose();
-                  }}
-                >
-                  {IconComponent && (
-                    <IconComponent
-                      size={22}
-                      weight="light"
-                      color={colors.neutral200}
-                    />
-                  )}
-                  <Text
-                    style={[
-                      styles.optionText,
-                      {
-                        color: colors.neutral200,
-                      },
-                    ]}
-                  >
-                    {p.number}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+            {priorities.map((p) => (
+              <TouchableOpacity
+                key={p.number}
+                style={[
+                  styles.option,
+                  {
+                    borderColor: colors.neutral600,
+                    backgroundColor:
+                      selectedPriority?.number === p.number
+                        ? colors.primaryDark
+                        : "transparent",
+                  },
+                ]}
+                onPress={() => onSelect(p)}
+              >
+                <Icons.Flag size={20} color={colors.white} />
+                <Text style={[styles.optionText, { color: colors.neutral200 }]}>
+                  {p.number}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <TouchableOpacity style={styles.saveBtn} onPress={onClose}>
-            <Text style={styles.cancelText}>Save</Text>
+            <Text style={styles.saveText}>Save</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
             <Text style={styles.cancelText}>Cancel</Text>
@@ -118,6 +105,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryDark,
     alignItems: "center",
   },
+  saveText: {
+    color: colors.neutral50,
+    fontSize: 15,
+  },
   cancelText: {
     color: colors.neutral300,
     fontSize: 15,
@@ -125,7 +116,7 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between", // spacing between items
+    justifyContent: "space-between",
     marginVertical: 10,
   },
   option: {
@@ -133,7 +124,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     marginVertical: 6,
-    width: "30%", // adjust width to fit 3 items per row
+    width: "30%",
     alignItems: "center",
   },
 });
