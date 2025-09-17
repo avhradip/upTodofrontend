@@ -1,6 +1,6 @@
 import BackButton from "@/components/BackButton";
 import Input from "@/components/Input";
-import PriorityDialog from "@/components/PriorityDialog"; // ✅ import dialog
+import PriorityDialog from "@/components/PriorityDialog";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { colors, radius } from "@/constants/colors";
 import { Priority } from "@/types";
@@ -22,7 +22,7 @@ import {
 } from "react-native";
 
 export default function TasksModal() {
-  const routre=useRouter()
+  const router = useRouter();
   const [priority, setPriority] = useState<Priority | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
@@ -38,21 +38,37 @@ export default function TasksModal() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const handleAddTodo = (data:any) => {
-    if ( !data.title || !data.date || !data.description || !data.priority) {
-      Alert.alert(`Plese enter all fields`)
+  const handleAddTodo = () => {
+    if (!data.title || !data.date || !data.description || !data.priority) {
+      Alert.alert("Please enter all fields");
     } else {
-      routre.back()
-      console.log(data);
+      console.log("Final Task:", data);
+      router.back();
     }
-  }
+  };
+
+  const mergeDateTime = (d: Date, t: Date) => {
+    return new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      t.getHours(),
+      t.getMinutes()
+    );
+  };
 
   const handleDateChange = (
     event: DateTimePickerEvent,
     selectedDate?: Date
   ) => {
     setShowDatePicker(Platform.OS === "ios");
-    if (selectedDate) setDate(selectedDate);
+    if (selectedDate) {
+      setDate(selectedDate);
+      if (time) {
+        const combined = mergeDateTime(selectedDate, time);
+        setData({ ...data, date: combined.toISOString() });
+      }
+    }
   };
 
   const handleTimeChange = (
@@ -60,7 +76,13 @@ export default function TasksModal() {
     selectedTime?: Date
   ) => {
     setShowTimePicker(Platform.OS === "ios");
-    if (selectedTime) setTime(selectedTime);
+    if (selectedTime) {
+      setTime(selectedTime);
+      if (date) {
+        const combined = mergeDateTime(date, selectedTime);
+        setData({ ...data, date: combined.toISOString() });
+      }
+    }
   };
 
   return (
@@ -70,7 +92,6 @@ export default function TasksModal() {
         <View style={styles.header}>
           <BackButton />
           <View style={{ flex: 1, alignItems: "center" }}>
-            <View style={styles.dragHandle} />
             <Text style={styles.title}>Add New Task</Text>
           </View>
         </View>
@@ -189,7 +210,7 @@ export default function TasksModal() {
           </TouchableOpacity>
         </View>
 
-        {/* ✅ Priority Dialog */}
+        {/* Priority Dialog */}
         <PriorityDialog
           visible={showDialog}
           onClose={() => setShowDialog(false)}
@@ -213,11 +234,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 0,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
+  header: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   dragHandle: {
     width: 40,
     height: 5,
@@ -231,9 +248,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     textAlign: "center",
   },
-  section: {
-    marginTop: 20,
-  },
+  section: { marginTop: 20 },
   label: {
     fontSize: 14,
     fontWeight: "500",
@@ -251,10 +266,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.neutral600,
   },
-  selectorText: {
-    color: colors.neutral100,
-    fontSize: 15,
-  },
+  selectorText: { color: colors.neutral100, fontSize: 15 },
   footer: {
     position: "absolute",
     bottom: 22,
@@ -269,9 +281,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: "center",
   },
-  addButtonText: {
-    color: colors.neutral50,
-    fontSize: 16,
-    fontWeight: "600",
-  },
+  addButtonText: { color: colors.neutral50, fontSize: 16, fontWeight: "600" },
 });
