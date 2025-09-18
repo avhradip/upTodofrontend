@@ -1,3 +1,4 @@
+import { colors } from "@/constants/colors";
 import { verticalScale } from "@/utility/styling";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
@@ -5,11 +6,10 @@ import * as Icon from "phosphor-react-native";
 import React from "react";
 import {
   ColorSchemeName,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingButton from "./FloatingButton";
@@ -84,7 +84,6 @@ export default function CustomTabs({
   };
 
   return (
-    <>
       <View style={[styles.wrapper, { bottom: bottomOffset }]}>
         <View style={[styles.container, tabBarStyle]}>
           {/* Left (Home) */}
@@ -97,7 +96,6 @@ export default function CustomTabs({
           {renderTab(routes[1], 1)}
         </View>
       </View>
-    </>
   );
 }
 
@@ -111,13 +109,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    height: Platform.OS === "ios" ? verticalScale(70) : verticalScale(65),
+    // height: Platform.OS === "ios" ? verticalScale(70) : verticalScale(65),
     borderRadius: 40,
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
+    // paddingHorizontal: 12,
+    // backgroundColor: "#000", // 👈 black background
+    shadowColor: colors.primaryDark,
+    shadowOffset: { width: 0, height:0},
     shadowOpacity: 0.15,
     shadowRadius: 6,
     elevation: 5,
@@ -130,3 +129,4 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
 });
+

@@ -76,7 +76,7 @@ const Login = () => {
             type="email-address"
             label="Email"
             value={email}
-            onChange={setEmail}
+            onChangeText={setEmail}
             placeholder="Enter your email"
             backgroundColor={colors.neutral800}
           />
@@ -84,7 +84,7 @@ const Login = () => {
             type="password"
             label="Password"
             value={password}
-            onChange={setPassword}
+            onChangeText={setPassword}
             placeholder="Enter your password"
             backgroundColor={colors.neutral800}
           />

@@ -1,7 +1,8 @@
 import BackButton from "@/components/BackButton";
+import CategoryDialog from "@/components/CategoryDialog";
 import Input from "@/components/Input";
+import ModalWrapper from "@/components/ModalWrapper";
 import PriorityDialog from "@/components/PriorityDialog";
-import ScreenWrapper from "@/components/ScreenWrapper";
 import { colors, radius } from "@/constants/colors";
 import { Priority } from "@/types";
 import { verticalScale } from "@/utility/styling";
@@ -86,7 +87,7 @@ export default function TasksModal() {
   };
 
   return (
-    <ScreenWrapper>
+    <ModalWrapper>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -189,15 +190,34 @@ export default function TasksModal() {
             <TouchableOpacity
               style={[
                 styles.selectorButton,
-                priority ? { backgroundColor: colors.primaryDark } : {},
               ]}
               onPress={() => setShowDialog(true)}
             >
               <Icons.Flag size={22} color={colors.neutral200} weight="light" />
               <Text style={[styles.selectorText, { marginLeft: 8 }]}>
                 {priority?.number
-                  ? `Priority ${priority.number}`
+                  ? `${priority.number}`
                   : "Select Priority"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Category */}
+          <View style={styles.section}>
+            <Text style={styles.label}>Category</Text>
+            <TouchableOpacity
+              style={[
+                styles.selectorButton,
+              ]}
+              onPress={() => setShowDialog(true)}
+            >
+              <Icons.TagSimple
+                size={22}
+                color={colors.neutral200}
+                weight="light"
+              />
+              <Text style={[styles.selectorText, { marginLeft: 8 }]}>
+                {priority?.number ? `${priority.number}` : "Select Category"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -220,19 +240,30 @@ export default function TasksModal() {
           }}
           selectedPriority={priority}
         />
+
+        {/* Priority Dialog */}
+        <CategoryDialog
+          visible={showDialog}
+          onClose={() => setShowDialog(false)}
+          onSelect={(p: Priority) => {
+            setPriority(p);
+            setData({ ...data, priority: p.number.toString() });
+          }}
+          selectedPriority={priority}
+        />
       </View>
-    </ScreenWrapper>
+    </ModalWrapper>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: colors.neutral900,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    // flex: 1,
+    // backgroundColor: colors.neutral900,
+    // borderTopLeftRadius: 20,
+    // borderTopRightRadius: 20,
     padding: 20,
-    paddingBottom: 0,
+    // paddingBottom: 20,
   },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   dragHandle: {

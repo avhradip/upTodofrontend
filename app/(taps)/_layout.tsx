@@ -24,11 +24,11 @@ export default function TabsLayout() {
           scheme={scheme}
           activeTintColor={colors.primary}
           inactiveTintColor={
-            scheme === "dark" ? colors.neutral400 : colors.neutral600
+            scheme === "dark" ? colors.neutral400 : colors.neutral400
           }
           tabBarStyle={{
             backgroundColor:
-              scheme === "dark" ? colors.neutral900 : colors.neutral50,
+              scheme === "dark" ? colors.neutral900 : colors.neutral900,
           }}
         />
       )}

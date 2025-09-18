@@ -14,7 +14,7 @@ interface Props {
   selectedPriority: Priority | null;
 }
 
-const PriorityDialog = ({
+const CategoryDialog = ({
   visible,
   onClose,
   onSelect,
@@ -73,7 +73,7 @@ const PriorityDialog = ({
   );
 };
 
-export default PriorityDialog;
+export default CategoryDialog;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -138,9 +138,9 @@ const styles = StyleSheet.create({
   line: {
     width: "100%",
     backgroundColor: colors.neutral300,
-    height:2
+    height: 2,
   },
   footer: {
-    gap:10
-  }
+    gap: 10,
+  },
 });
