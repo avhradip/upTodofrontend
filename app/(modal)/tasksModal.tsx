@@ -36,6 +36,7 @@ export default function TasksModal() {
     date: "",
   });
 
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -263,7 +264,11 @@ const styles = StyleSheet.create({
     // borderTopLeftRadius: 20,
     // borderTopRightRadius: 20,
     padding: 20,
+    backgroundColor: colors.neutral800,
+    borderTopLeftRadius:18,
+    borderTopRightRadius:18,
     // paddingBottom: 20,
+    height:"100%",
   },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   dragHandle: {
@@ -304,7 +309,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: colors.neutral900,
+    backgroundColor: colors.neutral800,
   },
   addButton: {
     paddingVertical: 14,

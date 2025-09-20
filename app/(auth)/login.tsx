@@ -43,7 +43,7 @@ const Login = () => {
     dispatch(login({ email, password }))
       .unwrap()
       .then(() => {
-        Alert.alert("Success", "Login successful!");
+        Alert.alert("Login successful!");
       })
       .catch((err: any) => {
         Alert.alert("Login Failed", err || "Something went wrong.");

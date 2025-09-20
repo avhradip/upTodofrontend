@@ -68,3 +68,10 @@ export type Priority = {
   number: number;
 };
 
+export type RegisterData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+

@@ -25,12 +25,12 @@ const API_URL = "http://localhost:8080/api/v1/auth";
 // Register
 export const register = createAsyncThunk(
     "auth/register",
-    async (userInfo: { name: string; email: string; password: string }, { rejectWithValue }) => {
+    async (userInfo: { name: string; email: string; password: string, confirmPassword: string }) => {
         try {
             const { data } = await axios.post(`${API_URL}/register`, userInfo);
             return data;
         } catch (error: any) {
-            return rejectWithValue(error.response?.data?.message || "Register failed");
+            return error.response?.data?.message;
         }
     }
 );

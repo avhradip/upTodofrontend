@@ -4,10 +4,12 @@ import NavigatingButton from "@/components/NavigatingButton";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Typo from "@/components/Typo";
 import { colors } from "@/constants/colors";
+import { register } from "@/Redux/authSlice";
 import { verticalScale } from "@/utility/styling";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "react-redux";
 
 const Register = () => {
   const router = useRouter();
@@ -16,9 +18,31 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // const handleClickRegister = () => {
-  //   router.push("/(tabs)/home");
-  // };
+  const dispatch = useDispatch<any>() 
+
+const handleClickRegister = (): void => {
+  if (!email || !password || !confirmPassword || !name) {
+    Alert.alert("Missing Fields", "Please fill in all fields.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    Alert.alert("Password Mismatch", "Passwords do not match.");
+    return;
+  }
+
+  dispatch(register({ email, password, name, confirmPassword }))
+    .unwrap()
+    .then(() => {
+      Alert.alert("Registration successful!");
+      router.replace("/(taps)/home")
+    })
+    .catch((err: any) => {
+      Alert.alert("Registration Failed", err || "Something went wrong.");
+      console.log(err.message);
+    });
+};
+
 
   const handleClickLogin = () => {
     router.push("/(auth)/login");
@@ -47,7 +71,7 @@ const Register = () => {
               type="default"
               label="Name"
               value={name}
-              onChange={setName}
+              onChangeText={setName}
               placeholder="Enter your name"
               backgroundColor={colors.neutral800}
             />
@@ -56,7 +80,7 @@ const Register = () => {
               type="email-address"
               label="Email"
               value={email}
-              onChange={setEmail}
+              onChangeText={setEmail}
               placeholder="Enter your email"
               backgroundColor={colors.neutral800}
             />
@@ -64,7 +88,7 @@ const Register = () => {
               type="password"
               label="Password"
               value={password}
-              onChange={setPassword}
+              onChangeText={setPassword}
               placeholder="Enter your password"
               backgroundColor={colors.neutral800}
             />
@@ -72,7 +96,7 @@ const Register = () => {
               type="password"
               label="Confirm Password"
               value={confirmPassword}
-              onChange={setConfirmPassword}
+              onChangeText={setConfirmPassword}
               placeholder="Re-enter your password"
               backgroundColor={colors.neutral800}
             />
@@ -83,7 +107,7 @@ const Register = () => {
             <NavigatingButton
               variant="primary"
               style={{ width: "100%" }}
-              // onPress={handleClickRegister}
+              onPress={handleClickRegister}
             >
               REGISTER
             </NavigatingButton>
